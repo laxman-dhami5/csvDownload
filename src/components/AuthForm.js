@@ -1,59 +1,53 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { Button, Card, Container, Row, Col } from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
+import AuthContext from "../store/auth-context";
 
 
 
-const Form = () => {
+const AuthForm = (props) => {
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
   const confirmPasswordRef = useRef();
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+   const[isLoading,setIsLoading]=useState(false);
+const ctx=useContext(AuthContext)
+  
 
-  const submitHandler = async (event) => {
+  const submitHandler =async (event) => {
     event.preventDefault();
     const enteredEmail = emailInputRef.current.value;
     const enteredPassword = passwordInputRef.current.value;
     const enteredConfirmPassword = confirmPasswordRef.current.value;
 
-    setError('');
-    setSuccess('');
-
-    if (!enteredEmail || !enteredPassword || !enteredConfirmPassword) {
-      setError('All fields are required');
+    if(enteredPassword!==enteredConfirmPassword){
+      alert('Password did not match')
       return;
     }
 
-    if (enteredPassword !== enteredConfirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-
-    try {
-      const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyA8OdPjLGrNGUic4_wdHjLt3LX9VMsTQG0`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: enteredEmail,
-          password: enteredPassword,
-          returnSecureToken: true,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error.message || 'Something went wrong');
+    setIsLoading(true)
+  try{ const response=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyA8OdPjLGrNGUic4_wdHjLt3LX9VMsTQG0',{
+      method:'POST',
+      body:JSON.stringify({
+        email:enteredEmail,
+        password:enteredPassword,
+        returnSecureToken:true
+      }),
+      headers:{'Content-Type':'application/json'}
+    })
+      setIsLoading(false)
+      if(!response.ok){
+   const data=await response.json()
+   let errorMessage='Authentication failed'
+   if(data && data.error && data.error.message){
+    errorMessage=data.error.message
+   }
+   alert(errorMessage)
+      }else{
+        const data=await response.json()
+       ctx.logIn(data.idToken)
       }
-
-      setSuccess('User has successfully signed up');
-      console.log('User has successfully signed up');
-    } catch (error) {
-      setError(error.message);
-    }
+  }catch{
+    alert('Something went wrong')
+  }
   };
 
   return (
@@ -68,7 +62,7 @@ const Form = () => {
             }}
           >
             <Card.Body>
-              <h2>SignUp</h2>
+              <h2>Sign Up</h2>
               <form onSubmit={submitHandler}>
                 <label style={{ display: "block", marginBottom: "5px" }}>
                   Email
@@ -109,21 +103,21 @@ const Form = () => {
                   required
                   ref={confirmPasswordRef}
                 />
-                <Button type="submit" variant="primary">
-                  SignUp
-                </Button>
-                {error && <div style={{ color: 'red', marginTop: '10px' }}>{error}</div>}
-                {success && <div style={{ color: 'green', marginTop: '10px' }}>{success}</div>}
+                {!isLoading && <Button type="submit" variant="primary" className="mb-2">
+                  Sign Up
+                </Button> }
+                {isLoading && <p>Sending request..</p>}
               </form>
+              <Button onClick={props.switchToLogin} variant="link">
+                Already have an account? Log In
+                
+              </Button>
             </Card.Body>
           </Card>
-          <Button className="mt-3 w-100" type="button" variant="secondary">
-            Have an account? Login
-          </Button>
         </Col>
       </Row>
     </Container>
   );
 };
 
-export default Form;
+export default AuthForm;
