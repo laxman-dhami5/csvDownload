@@ -67,14 +67,14 @@ function UpdateProfile() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <label style={{ margin: '0' }}>Full Name:</label>
-              <input type="text" ref={nameRef} />
+              <input type="text" ref={nameRef} required/>
             </div>
             <Button variant='primary' type='submit'>Update</Button>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <label style={{ margin: '0' }}>Profile Photo URL:</label>
-              <input type="url" ref={urlRef} />
+              <input type="url" ref={urlRef} required/>
             </div>
           </div>
         </div>

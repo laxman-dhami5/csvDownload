@@ -1,6 +1,6 @@
 import React from 'react';
-
 import { Link } from 'react-router-dom';
+import VerifyEmail from './VerifyEmail'; // Import the VerifyEmail component
 
 const Profile = () => {
   return (
@@ -8,11 +8,12 @@ const Profile = () => {
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <p>Welcome to Expense Tracker!!!</p>
         <p>
-         Your Profile is incomplete,
+          Your Profile is incomplete,
           <Link to="/complete-profile">Complete now</Link>
         </p>
-      </div><hr />
-      
+      </div>
+      <VerifyEmail /> {/* Add the VerifyEmail component here */}
+      <hr />
     </div>
   );
 };
