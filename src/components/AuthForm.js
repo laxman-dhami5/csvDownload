@@ -24,7 +24,7 @@ const ctx=useContext(AuthContext)
     }
 
     setIsLoading(true)
-  try{ const response=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyA8OdPjLGrNGUic4_wdHjLt3LX9VMsTQG0',{
+  try{ const response=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyB7MGC9bOluOU6TIdOfP5N4JXykPe1u_QY',{
       method:'POST',
       body:JSON.stringify({
         email:enteredEmail,
@@ -44,6 +44,7 @@ const ctx=useContext(AuthContext)
       }else{
         const data=await response.json()
        ctx.logIn(data.idToken)
+       alert('successful')
       }
   }catch{
     alert('Something went wrong')

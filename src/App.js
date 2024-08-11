@@ -1,24 +1,50 @@
-import React, {  useState } from 'react';
-import Login from './components/Login';
-import AuthForm from './components/AuthForm';
-
-
+import React, { useContext, useState } from "react";
+import { Route, Switch, Redirect } from "react-router-dom";
+import Login from "./components/Login";
+import AuthForm from "./components/AuthForm";
+import Profile from "./components/Profile";
+import AuthContext from "./store/auth-context";
+import UpdateProfile from "./components/UpdateProfile";
 
 const App = () => {
   const [showLogin, setShowLogin] = useState(true);
-  
-  const switchToLogin=()=>{
-    setShowLogin(true)
-  }
-  const switchToSignUp = () =>{
-    setShowLogin(false)
-  }
+  const ctx = useContext(AuthContext);
+  const isLoggedIn = ctx.isLoggedIn;
+
+  const switchToLogin = () => setShowLogin(true);
+  const switchToSignUp = () => setShowLogin(false);
 
   return (
-    <div >
-      
-      
-      {showLogin ? <Login switchToSignUp={switchToSignUp} /> : <AuthForm switchToLogin={switchToLogin} />}
+    <div>
+      <Switch>
+        {!isLoggedIn && (
+          <>
+            <Route path="/login" exact>
+              {showLogin ? (
+                <Login switchToSignUp={switchToSignUp} />
+              ) : (
+                <AuthForm switchToLogin={switchToLogin} />
+              )}
+            </Route>
+            <Route path="*">
+              <Redirect to="/login" />
+            </Route>
+          </>
+        )}
+        {isLoggedIn && (
+          <>
+            <Route path="/profile" exact>
+              <Profile />
+            </Route>
+            <Route path="/complete-profile" >
+              <UpdateProfile />
+            </Route>
+            <Route path="*">
+              <Redirect to="/profile" />
+            </Route>
+          </>
+        )}
+      </Switch>
     </div>
   );
 };

@@ -1,13 +1,15 @@
 import React, { useContext, useRef, useState } from "react";
 import { Button, Card, Container, Row, Col } from "react-bootstrap";
 import AuthContext from "../store/auth-context";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+
 
 
 const Login = (props) => {
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
   const [isLoading, setIsLoading] = useState(false);
-
+const history=useHistory()
   const ctx=useContext(AuthContext)
   const loginHandler = async (event) => {
     event.preventDefault();
@@ -16,7 +18,7 @@ const Login = (props) => {
 
     setIsLoading(true);
     try {
-      const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyA8OdPjLGrNGUic4_wdHjLt3LX9VMsTQG0', {
+      const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyB7MGC9bOluOU6TIdOfP5N4JXykPe1u_QY', {
         method: 'POST',
         body: JSON.stringify({
           email: enteredEmail,
@@ -39,8 +41,9 @@ const Login = (props) => {
         alert(errorMsg);
       } else {
         const data=await response.json();
+        
         ctx.logIn(data.idToken)
-        alert('Login successful');
+        history.replace('/profile')
         
       }
     } catch (error) {
@@ -50,7 +53,7 @@ const Login = (props) => {
   };
 
   return (
-    <Container className="mt-4">
+    <Container  className="mt-4">
       <Row className="justify-content-center">
         <Col xs={12} lg={4}>
           <Card
@@ -90,7 +93,7 @@ const Login = (props) => {
                   ref={passwordInputRef}
                 />
                 {!isLoading && <Button type="submit" variant="primary" className="mb-2">
-                  Login
+                  Login 
                 </Button>}
                 {isLoading && <p>Sending request...</p>}
               </form>

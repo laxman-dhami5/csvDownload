@@ -8,7 +8,7 @@ const AuthContext = React.createContext({
 
 export const AuthContextProvider = (props) => {
   const [token, setToken] = useState(null);
-
+  
   const userIsLoggedIn = !!token;
 
   const loginHandler = (token) => {
@@ -17,12 +17,14 @@ export const AuthContextProvider = (props) => {
   const logOutHandler = () => {
     setToken(null);
   };
+  
 
   const contextValue = {
     token: token,
     isLoggedIn: userIsLoggedIn,
     logIn: loginHandler,
     logOut: logOutHandler,
+   
   };
   return (
     <AuthContext.Provider value={contextValue}>
