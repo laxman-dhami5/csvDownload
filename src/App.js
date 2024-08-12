@@ -5,6 +5,7 @@ import AuthForm from "./components/AuthForm";
 import Profile from "./components/Profile";
 import AuthContext from "./store/auth-context";
 import UpdateProfile from "./components/UpdateProfile";
+import Forgot from "./components/Forgot";
 
 const App = () => {
   const [showLogin, setShowLogin] = useState(true);
@@ -26,6 +27,9 @@ const App = () => {
                 <AuthForm switchToLogin={switchToLogin} />
               )}
             </Route>
+            <Route path="/forgot-password" exact>
+              <Forgot />
+            </Route>
             <Route path="*">
               <Redirect to="/login" />
             </Route>
@@ -36,7 +40,7 @@ const App = () => {
             <Route path="/profile" exact>
               <Profile />
             </Route>
-            <Route path="/complete-profile" >
+            <Route path="/complete-profile" exact>
               <UpdateProfile />
             </Route>
             <Route path="*">

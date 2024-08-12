@@ -2,6 +2,7 @@ import React, { useContext, useRef, useState } from "react";
 import { Button, Card, Container, Row, Col } from "react-bootstrap";
 import AuthContext from "../store/auth-context";
 import { useHistory } from "react-router-dom";
+import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
 const Login = (props) => {
   const emailInputRef = useRef();
@@ -41,11 +42,11 @@ const Login = (props) => {
       } else {
         const data = await response.json();
         
-        // Store the token in localStorage
+       
         localStorage.setItem("userEmail", enteredEmail);
   localStorage.setItem("authToken", data.idToken);
 
-        // Update context and redirect
+       
         ctx.logIn(data.idToken);
         history.replace('/profile');
       }
@@ -99,7 +100,9 @@ const Login = (props) => {
                   Login
                 </Button>}
                 {isLoading && <p>Sending request...</p>}
+                
               </form>
+              <Link to='/forgot-password'>Forgot Password</Link>
               <Button onClick={props.switchToSignUp} variant="link">
                 Don't have an account? Sign Up
               </Button>
