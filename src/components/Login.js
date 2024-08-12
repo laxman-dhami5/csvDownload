@@ -1,16 +1,15 @@
 import React, { useContext, useRef, useState } from "react";
 import { Button, Card, Container, Row, Col } from "react-bootstrap";
 import AuthContext from "../store/auth-context";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-
-
+import { useHistory } from "react-router-dom";
 
 const Login = (props) => {
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
   const [isLoading, setIsLoading] = useState(false);
-const history=useHistory()
-  const ctx=useContext(AuthContext)
+  const history = useHistory();
+  const ctx = useContext(AuthContext);
+
   const loginHandler = async (event) => {
     event.preventDefault();
     const enteredEmail = emailInputRef.current.value;
@@ -40,20 +39,24 @@ const history=useHistory()
         }
         alert(errorMsg);
       } else {
-        const data=await response.json();
+        const data = await response.json();
         
-        ctx.logIn(data.idToken)
-        history.replace('/profile')
-        
+        // Store the token in localStorage
+        localStorage.setItem("userEmail", enteredEmail);
+  localStorage.setItem("authToken", data.idToken);
+
+        // Update context and redirect
+        ctx.logIn(data.idToken);
+        history.replace('/profile');
       }
     } catch (error) {
-      
+      setIsLoading(false);
       alert('Something went wrong');
     }
   };
 
   return (
-    <Container  className="mt-4">
+    <Container className="mt-4">
       <Row className="justify-content-center">
         <Col xs={12} lg={4}>
           <Card
@@ -93,7 +96,7 @@ const history=useHistory()
                   ref={passwordInputRef}
                 />
                 {!isLoading && <Button type="submit" variant="primary" className="mb-2">
-                  Login 
+                  Login
                 </Button>}
                 {isLoading && <p>Sending request...</p>}
               </form>
