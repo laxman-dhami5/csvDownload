@@ -14,8 +14,9 @@ const Profile = () => {
         </p>
         <Logout/>
       </div>
-      <VerifyEmail /> {/* Add the VerifyEmail component here */}
+      <VerifyEmail />
       <hr />
+      <Link to="/expense-form">Daily Expenses</Link>
     </div>
   );
 };

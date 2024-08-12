@@ -6,6 +6,7 @@ import Profile from "./components/Profile";
 import AuthContext from "./store/auth-context";
 import UpdateProfile from "./components/UpdateProfile";
 import Forgot from "./components/Forgot";
+import ExpenseForm from "./Expenses/ExpenseForm";
 
 const App = () => {
   const [showLogin, setShowLogin] = useState(true);
@@ -46,6 +47,10 @@ const App = () => {
             <Route path="*">
               <Redirect to="/profile" />
             </Route>
+            <Route path="/expense-form">
+            <ExpenseForm/>
+            </Route>
+            
           </>
         )}
       </Switch>
