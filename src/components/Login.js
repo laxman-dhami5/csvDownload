@@ -43,8 +43,8 @@ const Login = (props) => {
         const data = await response.json();
         
        
-        localStorage.setItem("userEmail", enteredEmail);
-  localStorage.setItem("authToken", data.idToken);
+        localStorage.getItem("userEmail", enteredEmail);
+  localStorage.getItem("authToken", data.idToken);
 
        
         ctx.logIn(data.idToken);

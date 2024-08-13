@@ -1,10 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Form, Alert } from 'react-bootstrap';
 
 const Forgot = () => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+
+  // Retrieve the stored email from localStorage when the component mounts
+  useEffect(() => {
+    const storedEmail = localStorage.getItem('forgotEmail');
+    if (storedEmail) {
+      setEmail(storedEmail);
+    }
+  }, []);
+
+  // Store the email in localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('forgotEmail', email);
+  }, [email]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,6 +46,7 @@ const Forgot = () => {
         setMessage('Password reset email sent successfully. Please check your inbox.');
         setError('');
         setEmail(''); // Clear the email field after successful submission
+        localStorage.removeItem('forgotEmail'); // Clear the email from localStorage
       }
     } catch (error) {
       console.error('Error:', error.message);
