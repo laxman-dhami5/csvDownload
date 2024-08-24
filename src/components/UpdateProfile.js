@@ -1,20 +1,20 @@
-import React, { useContext, useRef } from "react";
+import React, { useRef } from "react";
 import { Button } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory, Link } from "react-router-dom";
-import AuthContext from "../store/auth-context";
+import { updateToken } from "../store/authSlice";
 
 function UpdateProfile() {
   const nameRef = useRef();
   const urlRef = useRef();
   const history = useHistory();
-  const ctx = useContext(AuthContext);
+  const idToken = useSelector((state) => state.auth.idToken);
+  const dispatch = useDispatch();
 
   const submitHandler = async (e) => {
     e.preventDefault();
     const enteredName = nameRef.current.value;
     const enteredUrl = urlRef.current.value;
-
-    const idToken = ctx.token;
 
     try {
       const response = await fetch(
@@ -42,9 +42,9 @@ function UpdateProfile() {
         alert(errorMsg);
       } else {
         const data = await response.json();
-        ctx.logIn(data.idToken);
+        dispatch(updateToken({ idToken: data.idToken }));
         alert("Profile updated successfully!");
-        history.push("/profile"); // Use push instead of replace to allow back navigation
+        history.push("/profile");
       }
     } catch (error) {
       console.error("Error:", error.message);
@@ -58,12 +58,20 @@ function UpdateProfile() {
 
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          color: "whitesmoke",
+        }}
+      >
         <p>Winners never quit, quitters never win</p>
         <p>
           Your profile is 60% completed, a complete profile has a higher chance
           to land a job.
-          <Link to="/complete-profile">Complete now</Link>
+          <Link to="/complete-profile" style={{ color: "yellow" }}>
+            Complete now
+          </Link>
         </p>
       </div>
       <form
@@ -92,7 +100,12 @@ function UpdateProfile() {
           }}
         >
           <div
-            style={{ display: "flex", flexDirection: "column", gap: "10px" }}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+              color: "whitesmoke",
+            }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <label style={{ margin: "0" }}>Full Name:</label>
@@ -105,8 +118,15 @@ function UpdateProfile() {
           <div
             style={{ display: "flex", flexDirection: "column", gap: "10px" }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <label style={{ margin: "0" }}>Profile Photo URL:</label>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                color: "whitesmoke",
+              }}
+            >
+              <label >Profile Photo URL:</label>
               <input type="url" ref={urlRef} required />
             </div>
           </div>

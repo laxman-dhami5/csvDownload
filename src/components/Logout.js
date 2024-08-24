@@ -1,22 +1,25 @@
-import React, { useContext } from 'react';
+
 import { Button } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
-import AuthContext from '../store/auth-context';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../store/authSlice';
 
 const Logout = () => {
-    const ctx = useContext(AuthContext);
+    const isLoggedIn=useSelector(state=>state.auth.isLoggedIn)
+    const dispatch=useDispatch()
     const history = useHistory(); 
 
     const logOutHandler = () => {
-        ctx.logOut(); 
+        dispatch(logout()) 
         localStorage.removeItem('idToken'); 
         history.push('/login'); 
     };
 
     return (
         <div style={{ margin: '10px' }}> 
-            {ctx.isLoggedIn && ( 
-                <Button onClick={logOutHandler}>Logout</Button>
+            {isLoggedIn && ( 
+                <Button variant='danger' onClick={logOutHandler}>Logout</Button>
             )}
         </div>
     );

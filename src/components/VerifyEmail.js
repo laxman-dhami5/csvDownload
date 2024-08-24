@@ -1,14 +1,23 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
-import AuthContext from '../store/auth-context';
+import { useDispatch, useSelector } from 'react-redux';
+import { varify } from '../store/authSlice';
 
 const VerifyEmail = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const ctx = useContext(AuthContext);
+
+  // Ensure state.auth.idToken is correctly accessed
+  const idToken = useSelector((state) => state.auth.idToken);
+  const dispatch = useDispatch();
 
   const sendVerificationEmail = async () => {
-    const idToken = ctx.token;
+    if (!idToken) {
+      setError('No ID token found. Please log in first.');
+      return;
+    }
+
+    dispatch(varify());
 
     try {
       const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyB7MGC9bOluOU6TIdOfP5N4JXykPe1u_QY', {
@@ -47,6 +56,6 @@ const VerifyEmail = () => {
       {success && <p style={{ color: 'green' }}>{success}</p>}
     </div>
   );
-}
+};
 
 export default VerifyEmail;

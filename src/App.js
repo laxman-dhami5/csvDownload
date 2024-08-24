@@ -1,23 +1,22 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { Route, Switch, Redirect } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Login from "./components/Login";
 import AuthForm from "./components/AuthForm";
 import Profile from "./components/Profile";
-import AuthContext from "./store/auth-context";
 import UpdateProfile from "./components/UpdateProfile";
 import Forgot from "./components/Forgot";
 import ExpenseForm from "./Expenses/ExpenseForm";
 
 const App = () => {
   const [showLogin, setShowLogin] = useState(true);
-  const ctx = useContext(AuthContext);
-  const isLoggedIn = ctx.isLoggedIn;
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   const switchToLogin = () => setShowLogin(true);
   const switchToSignUp = () => setShowLogin(false);
 
   return (
-    <div>
+    <div style={{ backgroundColor: "blueviolet", height:"100vh"}}>
       <Switch>
         {!isLoggedIn && (
           <>
@@ -44,13 +43,12 @@ const App = () => {
             <Route path="/complete-profile" exact>
               <UpdateProfile />
             </Route>
+            <Route path="/expense-form" exact>
+              <ExpenseForm />
+            </Route>
             <Route path="*">
               <Redirect to="/profile" />
             </Route>
-            <Route path="/expense-form">
-            <ExpenseForm/>
-            </Route>
-            
           </>
         )}
       </Switch>

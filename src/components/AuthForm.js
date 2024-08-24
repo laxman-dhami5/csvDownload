@@ -1,14 +1,16 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { Button, Card, Container, Row, Col } from "react-bootstrap";
-import AuthContext from "../store/auth-context";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from '../store/authSlice'
 
 const AuthForm = (props) => {
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
   const confirmPasswordRef = useRef();
   const [isLoading, setIsLoading] = useState(false);
-  const ctx = useContext(AuthContext);
-
+  
+  const dispatch = useDispatch();
+  
   const submitHandler = async (event) => {
     event.preventDefault();
     const enteredEmail = emailInputRef.current.value;
@@ -45,12 +47,13 @@ const AuthForm = (props) => {
         alert(errorMessage);
       } else {
         const data = await response.json();
+        
         // Store email and token in localStorage
         localStorage.setItem("userEmail", enteredEmail);
         localStorage.setItem("authToken", data.idToken);
 
-        // Update context with token
-        ctx.logIn(data.idToken);
+        // Dispatch login action to store token and userId in Redux
+        dispatch(login({ token: data.idToken, userId: data.localId }));
 
         alert('Sign up successful');
       }
