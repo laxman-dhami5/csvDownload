@@ -3,8 +3,10 @@ import { Col, Container, Row, Form, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { addExpense, setItems, removeExpense } from "../store/expensesSlice";
 import { selectTotalExpenses } from "../store/expensesSlice";
+import { activateDarkTheme, toggleTheme } from "../store/themeSlice";
 
 const ExpenseForm = () => {
+    const isDark = useSelector((state) => state.theme.isDark);
     const entries = useSelector((state) => state.expenses.items || []);
     const dispatch = useDispatch();
     const moneyRef = useRef();
@@ -43,7 +45,6 @@ const ExpenseForm = () => {
         const enteredCategory = categoryRef.current.value;
 
         if (editingId) {
-            // PUT request to update an existing expense
             try {
                 const response = await fetch(`https://expensetracker-875ce-default-rtdb.firebaseio.com/expenses/${editingId}.json`, {
                     method: "PUT",
@@ -69,14 +70,13 @@ const ExpenseForm = () => {
                     description: enteredDescription,
                     category: enteredCategory,
                 }));
-                
 
                 // Reset form and editing state
                 setEditingId(null);
                 moneyRef.current.value = "";
                 descriptionRef.current.value = "";
                 categoryRef.current.value = "";
-                alert('updated')
+                alert('Updated successfully.');
             } catch (error) {
                 console.error("Error:", error);
             }
@@ -142,11 +142,45 @@ const ExpenseForm = () => {
         setEditingId(entry.id);
     };
 
+    const premiumHandler = () => {
+        dispatch(activateDarkTheme());
+    };
+
+    const toggleThemeHandler = () => {
+        dispatch(toggleTheme());
+    };
+
+    const downloadCSV = () => {
+        // Create CSV content
+        const headers = ["ID", "Money", "Description", "Category"];
+        const rows = entries.map(entry => [entry.id, entry.money, entry.description, entry.category]);
+
+        const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+        const blob = new Blob([csvContent]);
+
+        // Create a link and trigger the download
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "expenses.csv";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url); // Clean up
+    };
+
     return (
-        <Container>
+        <Container
+            style={{
+                backgroundColor: isDark ? "#333" : "#fff", // Dark theme background if isDark is true
+                color: isDark ? "#fff" : "#000", // Text color based on the theme
+                minHeight: "100vh",
+                padding: "20px"
+            }}
+        >
             <Row className="justify-content-center">
                 <Col md={4}>
-                    <h2 style={{ color: "white", textAlign: "center" }}>
+                    <h2 style={{ textAlign: "center" }}>
                         Daily Expenses
                     </h2>
                     <Form onSubmit={submitHandler}>
@@ -172,11 +206,11 @@ const ExpenseForm = () => {
                         <Button variant="primary" type="submit" style={{ margin: '2rem' }}>
                             {editingId ? 'Update' : 'Submit'}
                         </Button>
-                        {totalExpenses > 10000 && <Button variant="danger">Premium</Button>}
+                        {totalExpenses > 10000 && <Button onClick={premiumHandler} variant="danger">Premium</Button>}
                     </Form>
 
                     {entries.length > 0 && (
-                        <div style={{ marginTop: "20px", padding: "10px", backgroundColor: "yellow" }}>
+                        <div style={{ marginTop: "20px", padding: "10px", backgroundColor: isDark ? "#444" : "yellow" }}>
                             <h4>Expense Details:</h4>
                             <ul>
                                 {entries.map((entry) => (
@@ -187,8 +221,22 @@ const ExpenseForm = () => {
                                     </li>
                                 ))}
                             </ul>
+                            <h4 style={{color: isDark ? 'lightgreen' : 'green'}}>Total Amount Spent: {totalExpenses}</h4>
                         </div>
                     )}
+
+                    <Button
+                        onClick={toggleThemeHandler}
+                        style={{ position: 'fixed', top: '20px', right: '20px' }}
+                    >
+                        Toggle Theme
+                    </Button>
+                    <Button
+                        onClick={downloadCSV}
+                        style={{ position: 'fixed', top: '70px', right: '20px' }}
+                    >
+                        Download File
+                    </Button>
                 </Col>
             </Row>
         </Container>
